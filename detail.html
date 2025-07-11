@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天气详情 - 中国天气</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/detail.css">
+    <!-- 引入Chart.js用于数据可视化 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="index.html">中国天气</a></h1>
+            <div class="search-container">
+                <input type="text" id="city-search" placeholder="搜索城市...">
+                <button id="search-button">搜索</button>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <section class="city-header">
+                <div id="city-info">
+                    <h2 id="city-name">城市名称</h2>
+                    <p id="last-update">更新时间: --</p>
+                </div>
+                <div id="current-weather">
+                    <div class="weather-icon">
+                        <img id="weather-icon" src="" alt="天气图标">
+                    </div>
+                    <div class="temp-info">
+                        <span id="current-temp">--°C</span>
+                        <span id="weather-text">--</span>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="weather-details">
+                <div class="detail-item">
+                    <div class="detail-label">体感温度</div>
+                    <div id="feels-like" class="detail-value">--°C</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">湿度</div>
+                    <div id="humidity" class="detail-value">--%</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">风向/风速</div>
+                    <div id="wind" class="detail-value">-- --km/h</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">气压</div>
+                    <div id="pressure" class="detail-value">--hPa</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">能见度</div>
+                    <div id="visibility" class="detail-value">--km</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">降水量</div>
+                    <div id="precipitation" class="detail-value">--mm</div>
+                </div>
+            </section>
+            
+            <section class="forecast-section">
+                <h3>7天天气预报</h3>
+                <div id="daily-forecast" class="forecast-container"></div>
+            </section>
+            
+            <section class="chart-section">
+                <h3>温度趋势</h3>
+                <div class="chart-container">
+                    <canvas id="temp-chart"></canvas>
+                </div>
+            </section>
+            
+            <section class="hourly-forecast">
+                <h3>24小时预报</h3>
+                <div id="hourly-forecast" class="hourly-container"></div>
+            </section>
+            
+            <section class="warnings-section">
+                <h3>天气预警</h3>
+                <div id="weather-warnings" class="warnings-container">
+                    <p>暂无天气预警信息</p>
+                </div>
+            </section>
+            
+            <div class="action-buttons">
+                <a href="recommendations.html" class="btn" id="recommendations-btn">查看天气建议</a>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 中国天气. 数据来源: <a href="https://www.qweather.com/" target="_blank">和风天气</a></p>
+        </div>
+    </footer>
+    
+    <script src="js/api.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/detail.js"></script>
+</body>
+</html>

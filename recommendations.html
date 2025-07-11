@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天气建议 - 中国天气</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/detail.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="index.html">中国天气</a></h1>
+            <div class="search-container">
+                <input type="text" id="city-search" placeholder="搜索城市...">
+                <button id="search-button">搜索</button>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <section class="city-header">
+                <div id="city-info">
+                    <h2 id="city-name">城市名称</h2>
+                    <p id="last-update">更新时间: --</p>
+                </div>
+                <div id="current-weather">
+                    <div class="weather-icon">
+                        <img id="weather-icon" src="" alt="天气图标">
+                    </div>
+                    <div class="temp-info">
+                        <span id="current-temp">--°C</span>
+                        <span id="weather-text">--</span>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="recommendations-section">
+                <div class="recommendation-card">
+                    <h3>穿衣建议</h3>
+                    <div id="clothing-recommendation" class="recommendation-content">
+                        <p>加载中...</p>
+                    </div>
+                </div>
+                
+                <div class="recommendation-card">
+                    <h3>户外活动建议</h3>
+                    <div id="activity-recommendation" class="recommendation-content">
+                        <p>加载中...</p>
+                    </div>
+                </div>
+                
+                <div class="recommendation-card">
+                    <h3>健康提示</h3>
+                    <div id="health-recommendation" class="recommendation-content">
+                        <p>加载中...</p>
+                    </div>
+                </div>
+                
+                <div class="recommendation-card">
+                    <h3>天气相关新闻</h3>
+                    <div id="weather-news" class="recommendation-content">
+                        <p>加载中...</p>
+                    </div>
+                </div>
+            </section>
+            
+            <div class="action-buttons">
+                <a href="javascript:history.back()" class="btn">返回天气详情</a>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 中国天气. 数据来源: <a href="https://www.qweather.com/" target="_blank">和风天气</a></p>
+        </div>
+    </footer>
+    
+    <script src="js/api.js"></script>
+    <script src="js/recommendations.js"></script>
+</body>
+</html>

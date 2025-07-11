@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中国天气</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/map.css">
+    <!-- 引入ECharts用于地图可视化 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>中国天气</h1>
+            <div class="search-container">
+                <input type="text" id="city-search" placeholder="搜索城市...">
+                <button id="search-button">搜索</button>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <section class="map-section">
+                <div id="china-map"></div>
+            </section>
+            
+            <section class="rankings">
+                <div class="ranking-card">
+                    <h2>实时高温排行榜</h2>
+                    <table id="high-temp-table">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>城市</th>
+                                <th>温度 (°C)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="3">加载中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="ranking-card">
+                    <h2>实时低温排行榜</h2>
+                    <table id="low-temp-table">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>城市</th>
+                                <th>温度 (°C)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="3">加载中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 中国天气. 数据来源: <a href="https://www.qweather.com/" target="_blank">和风天气</a></p>
+        </div>
+    </footer>
+    
+    <script src="js/api.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

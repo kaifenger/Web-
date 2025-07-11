@@ -1,0 +1,240 @@
+/* 城市头部信息样式 */
+.city-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+#city-name {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+#last-update {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+#current-weather {
+    display: flex;
+    align-items: center;
+}
+
+.weather-icon {
+    margin-right: 1rem;
+}
+
+.weather-icon img {
+    width: 64px;
+    height: 64px;
+}
+
+.temp-info {
+    text-align: right;
+}
+
+#current-temp {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+#weather-text {
+    color: #555;
+}
+
+/* 天气详情样式 */
+.weather-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.detail-item {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.detail-label {
+    color: #777;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.detail-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+/* 预报样式 */
+.forecast-section, .chart-section, .hourly-forecast, .warnings-section {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.forecast-section h3, .chart-section h3, .hourly-forecast h3, .warnings-section h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.forecast-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+
+.forecast-item {
+    min-width: 120px;
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.forecast-date {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.forecast-icon img {
+    width: 50px;
+    height: 50px;
+    margin: 0.5rem 0;
+}
+
+.forecast-temp {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.max-temp {
+    color: var(--accent-color);
+}
+
+.min-temp {
+    color: var(--primary-color);
+}
+
+/* 图表容器样式 */
+.chart-container {
+    height: 300px;
+    position: relative;
+}
+
+/* 小时预报样式 */
+.hourly-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+
+.hourly-item {
+    min-width: 80px;
+    text-align: center;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.hourly-time {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.hourly-icon img {
+    width: 40px;
+    height: 40px;
+    margin: 0.3rem 0;
+}
+
+.hourly-temp {
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+/* 预警样式 */
+.warning-item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    background-color: rgba(231, 76, 60, 0.1);
+    border-left: 4px solid var(--accent-color);
+}
+
+.warning-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+.warning-time, .warning-source {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 0.5rem;
+}
+
+/* 建议页面样式 */
+.recommendations-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.recommendation-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.recommendation-card h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.recommendation-content {
+    line-height: 1.7;
+}
+
+.news-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.news-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.news-title {
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.news-source {
+    font-size: 0.85rem;
+    color: #777;
+}
