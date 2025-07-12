@@ -1,0 +1,238 @@
+事件模拟触发
+使用 emit 模拟事件触发。本例通过模拟click点击事件打开信息窗体
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>事件模拟触发</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" type="text/css">
+    <style>
+      html,body,#container{
+        height: 100%
+      }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=您申请的key值"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <script type="text/javascript">
+        //初始化地图对象，加载地图
+        var map = new AMap.Map("container", {
+            resizeEnable: true,
+            zoom: 13
+        });
+        var clickHandler = function(e) {
+            log.success("您模拟触发了地图click事件!");
+            new AMap.InfoWindow({
+                content:'模拟事件触发',
+            }).open(map,e.lnglat)
+        };
+        // 
+        map.on('click', clickHandler);
+        map.on('complete', function() {
+            setTimeout(function(){
+                // 模拟触发地图click事件
+                map.emit('click',{
+                    lnglat : map.getCenter()
+                });
+            },2000)
+        })
+    </script>
+</body>
+</html>
+
+浏览器定位
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>浏览器精确定位</title>
+      <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <style>
+        html,body,#container{
+            height:100%;
+        }
+        .info{
+            width:26rem;
+        }
+    </style>
+<body>
+<div id='container'></div>
+<div class="info">
+    <h4 id='status'></h4><hr>
+    <p id='result'></p><hr>
+    <p >由于众多浏览器已不再支持非安全域的定位请求，为保位成功率和精度，请升级您的站点到HTTPS。</p>
+</div>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=您申请的key值"></script>
+<script type="text/javascript">
+    var map = new AMap.Map('container', {
+        resizeEnable: true
+    });
+    AMap.plugin('AMap.Geolocation', function() {
+        var geolocation = new AMap.Geolocation({
+            enableHighAccuracy: true,//是否使用高精度定位，默认:true
+            timeout: 10000,          //超过10秒后停止定位，默认：5s
+            buttonPosition:'RB',    //定位按钮的停靠位置
+            buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+            zoomToAccuracy: true,   //定位成功后是否自动调整地图视野到定位点
+
+        });
+        map.addControl(geolocation);
+        geolocation.getCurrentPosition(function(status,result){
+            if(status=='complete'){
+                onComplete(result)
+            }else{
+                onError(result)
+            }
+        });
+    });
+    //解析定位结果
+    function onComplete(data) {
+        document.getElementById('status').innerHTML='定位成功'
+        var str = [];
+        str.push('定位结果：' + data.position);
+        str.push('定位类别：' + data.location_type);
+        if(data.accuracy){
+             str.push('精度：' + data.accuracy + ' 米');
+        }//如为IP精确定位结果则没有精度信息
+        str.push('是否经过偏移：' + (data.isConverted ? '是' : '否'));
+        document.getElementById('result').innerHTML = str.join('<br>');
+    }
+    //解析定位错误信息
+    function onError(data) {
+        document.getElementById('status').innerHTML='定位失败'
+        document.getElementById('result').innerHTML = '失败原因排查信息:'+data.message;
+    }
+</script>
+</body>
+</html>
+
+简易缩放按钮
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>简易缩放按钮</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <style>
+        html, body, #container {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<script type="text/javascript"
+        src="https://webapi.amap.com/maps?v=1.4.15&key=您申请的key值"></script>
+<script type="text/javascript">
+    // 创建地图实例
+    var map = new AMap.Map("container", {
+        zoom: 13,
+        center: [116.43, 39.92],
+        resizeEnable: true
+    });
+
+    AMap.plugin([
+        'AMap.ToolBar',
+    ], function(){
+        // 在图面添加工具条控件，工具条控件集成了缩放、平移、定位等功能按钮在内的组合控件
+        map.addControl(new AMap.ToolBar({
+            // 简易缩放模式，默认为 false
+            liteStyle: true
+        }));
+    });
+</script>
+</body>
+</html>
+
+使用Weather插件，获取指定地区的天气信息，可用于天气查询等场景。
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>天气预报查询</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <style type="text/css">
+        html,body,#container{
+            height:100%;
+        }
+        .weather{
+            width:5rem;
+            display:inline-block;
+            padding-left:0.5rem;
+        }
+        .sharp{
+            height: 1rem;
+            width: 1rem;
+            background-color: white;
+            transform: rotateZ(45deg);
+            box-shadow: 2px 2px 3px rgba(114, 124, 245, .5);
+            position: inherit;
+            margin-left: 10.5rem;
+            margin-top: -6px;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<div class="info">
+    <h4>预报天气</h4><hr>
+    <p id='forecast'></p>
+</div>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=您申请的key值"></script>
+<script type="text/javascript">
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+		center: [116.486409,39.921489],
+        zoom: 12
+    });
+    AMap.plugin('AMap.Weather', function() {
+        var weather = new AMap.Weather();
+        //查询实时天气信息, 查询的城市到行政级别的城市，如朝阳区、杭州市
+        weather.getLive('朝阳区', function(err, data) {
+            if (!err) {
+                var str = [];
+                str.push('<h4 >实时天气' + '</h4><hr>');
+                str.push('<p>城市/区：' + data.city + '</p>');
+                str.push('<p>天气：' + data.weather + '</p>');
+                str.push('<p>温度：' + data.temperature + '℃</p>');
+                str.push('<p>风向：' + data.windDirection + '</p>');
+                str.push('<p>风力：' + data.windPower + ' 级</p>');
+                str.push('<p>空气湿度：' + data.humidity + '</p>');
+                str.push('<p>发布时间：' + data.reportTime + '</p>');
+                var marker = new AMap.Marker({map: map, position: map.getCenter()});
+                var infoWin = new AMap.InfoWindow({
+                    content: '<div class="info" style="position:inherit;margin-bottom:0;">'+str.join('')+'</div><div class="sharp"></div>',
+                    isCustom:true,
+                    offset: new AMap.Pixel(0, -37)
+                });
+                infoWin.open(map, marker.getPosition());
+                marker.on('mouseover', function() {
+                    infoWin.open(map, marker.getPosition());
+                });
+            }
+        });
+        //未来4天天气预报
+        weather.getForecast('朝阳区', function(err, data) {
+            if (err) {return;}
+            var str = [];
+            for (var i = 0,dayWeather; i < data.forecasts.length; i++) {
+                dayWeather = data.forecasts[i];
+                str.push(dayWeather.date+' <span class="weather">'+dayWeather.dayWeather+'</span> '+ dayWeather.nightTemp + '~' + dayWeather.dayTemp + '℃');
+            }
+            document.getElementById('forecast').innerHTML = str.join('<br>');
+        });
+    });
+</script>
+</body>
+</html>
