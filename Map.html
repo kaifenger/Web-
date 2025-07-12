@@ -1,0 +1,518 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>地图显示</title>
+	<style type="text/css">
+		/* 基础样式重置 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		
+		body {
+			margin: 0;
+			height: 100vh;
+			width: 100vw;
+			font-family: 'Microsoft YaHei', Arial, sans-serif;
+			background-color: #f5f5f5;
+		}
+		
+		#mapContainer {
+			height: 100%;
+			width: 100%;
+			position: relative;
+		}
+		
+		/* 搜索框容器样式 */
+		#tip {
+			position: absolute;
+			top: 20px;
+			left: 20px;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			border: none;
+			padding: 20px;
+			border-radius: 15px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+			z-index: 1000;
+			min-width: 400px;
+			max-width: 500px;
+			backdrop-filter: blur(10px);
+		}
+		
+		#tip b {
+			color: white;
+			font-size: 14px;
+			margin-bottom: 10px;
+			display: block;
+			font-weight: 500;
+		}
+		
+		/* 输入框样式 */
+		#tip input[type="text"] {
+			width: 100%;
+			height: 40px;
+			border: none;
+			padding: 0 15px;
+			border-radius: 20px;
+			font-size: 14px;
+			outline: none;
+			background: rgba(255, 255, 255, 0.9);
+			transition: all 0.3s ease;
+			margin-top: 8px;
+		}
+		
+		#tip input[type="text"]:focus {
+			background: white;
+			box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+			transform: translateY(-2px);
+		}
+		
+		#tip input[type="text"]::placeholder {
+			color: #999;
+		}
+		
+		/* 按钮样式 */
+		#tip input[type="button"] {
+			background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+			height: 35px;
+			padding: 0 20px;
+			text-align: center;
+			line-height: 35px;
+			color: white;
+			font-size: 13px;
+			border-radius: 18px;
+			outline: none;
+			border: none;
+			cursor: pointer;
+			margin-top: 10px;
+			transition: all 0.3s ease;
+			font-weight: 500;
+		}
+		
+		#tip input[type="button"]:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+		}
+		
+		/* 搜索结果容器 */
+		#result1 {
+			max-height: 350px;
+			overflow-y: auto;
+			margin-top: 15px;
+			background: rgba(255, 255, 255, 0.95);
+			border-radius: 10px;
+			backdrop-filter: blur(10px);
+		}
+		
+		/* 搜索结果项样式 */
+		#result1 > div {
+			padding: 12px 15px !important;
+			border-bottom: 1px solid rgba(193, 255, 193, 0.3) !important;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			border-radius: 8px;
+			margin: 2px;
+		}
+		
+		#result1 > div:hover {
+			background: linear-gradient(45deg, #667eea, #764ba2) !important;
+			color: white;
+			transform: translateX(5px);
+		}
+		
+		#result1 > div:last-child {
+			border-bottom: none !important;
+		}
+		
+		/* 搜索结果详细信息样式 */
+		#result1 table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+		
+		#result1 table td {
+			padding: 8px;
+			vertical-align: top;
+		}
+		
+		#result1 h3 {
+			margin: 0 0 8px 0;
+			font-size: 14px;
+		}
+		
+		#result1 img {
+			border-radius: 50%;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		}
+		
+		/* 滚动条美化 */
+		#result1::-webkit-scrollbar {
+			width: 6px;
+		}
+		
+		#result1::-webkit-scrollbar-track {
+			background: rgba(255, 255, 255, 0.1);
+			border-radius: 3px;
+		}
+		
+		#result1::-webkit-scrollbar-thumb {
+			background: linear-gradient(45deg, #667eea, #764ba2);
+			border-radius: 3px;
+		}
+		
+		#result1::-webkit-scrollbar-thumb:hover {
+			background: linear-gradient(45deg, #764ba2, #667eea);
+		}
+		
+		/* 响应式设计 */
+		@media (max-width: 768px) {
+			#tip {
+				left: 10px;
+				right: 10px;
+				min-width: auto;
+				max-width: none;
+				padding: 15px;
+			}
+		}
+		
+		/* 地图控件样式优化 */
+		.amap-toolbar, .amap-maptype-control, .amap-scale-control {
+			border-radius: 8px !important;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+		}
+		
+		/* 将地图控件移到右下角并放大 */
+		.amap-toolbar {
+			position: fixed !important;
+			bottom: 20px !important;
+			right: 20px !important;
+			top: auto !important;
+			left: auto !important;
+			transform: scale(1.3) !important;
+			transform-origin: bottom right !important;
+			background: rgba(255, 255, 255, 0.95) !important;
+			backdrop-filter: blur(10px) !important;
+		}
+		
+		/* 放大工具栏内的所有按钮 */
+		.amap-toolbar .amap-btn {
+			width: 40px !important;
+			height: 40px !important;
+			line-height: 40px !important;
+			font-size: 18px !important;
+		}
+		
+		/* 放大缩放控件 */
+		.amap-zoom {
+			transform: scale(1.3) !important;
+			transform-origin: bottom right !important;
+		}
+		
+		.amap-zoom .amap-zoom-in,
+		.amap-zoom .amap-zoom-out {
+			width: 40px !important;
+			height: 40px !important;
+			line-height: 40px !important;
+			font-size: 20px !important;
+			font-weight: bold !important;
+		}
+		
+		/* 地图类型切换控件位置调整 */
+		.amap-maptype-control {
+			position: fixed !important;
+			bottom: 100px !important;
+			right: 20px !important;
+			top: auto !important;
+			left: auto !important;
+			transform: scale(1.2) !important;
+			transform-origin: bottom right !important;
+		}
+		
+		/* 比例尺控件位置调整 */
+		.amap-scale-control {
+			position: fixed !important;
+			bottom: 60px !important;
+			right: 20px !important;
+			top: auto !important;
+			left: auto !important;
+			transform: scale(1.2) !important;
+			transform-origin: bottom right !important;
+		}
+		
+		/* 确保控件不会重叠 */
+		.amap-toolbar {
+			z-index: 999 !important;
+		}
+		
+		.amap-maptype-control {
+			z-index: 998 !important;
+		}
+		
+		.amap-scale-control {
+			z-index: 997 !important;
+		}
+		
+		/* 移动端适配 */
+		@media (max-width: 768px) {
+			.amap-toolbar {
+				transform: scale(1.1) !important;
+				bottom: 15px !important;
+				right: 15px !important;
+			}
+			
+			.amap-maptype-control {
+				transform: scale(1.0) !important;
+				bottom: 80px !important;
+				right: 15px !important;
+			}
+			
+			.amap-scale-control {
+				transform: scale(1.0) !important;
+				bottom: 50px !important;
+				right: 15px !important;
+			}
+		}
+		
+		/* 信息窗口样式 */
+		.amap-info-window {
+			border-radius: 10px !important;
+		}
+	</style>
+</head>
+<body>
+	<div id="mapContainer"></div>
+
+  <div id="tip">
+    <b>🔍 请输入您要搜索的地点：</b>
+    <input type="text" id="keyword" name="keyword" value="" onkeydown='keydown(event)' placeholder="例如：北京大学、天安门、星巴克..." />
+    <div id="result1" name="result1"></div>
+  </div>
+
+	<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=330d2ffe4033c945910b51fb4c49ddf7"></script>
+	<script type="text/javascript">
+
+			var map = new AMap.Map('mapContainer', {
+				resizeEnable: true,
+				//rotateEnable: true,
+				//dragEnable: true,
+				//zoomEnable: true,
+				//设置可缩放的级别
+				//zooms: [3,18],
+				//传入2D视图，设置中心点和缩放级别
+				// view: new AMap.View2D({
+				// 	center: new AMap.LngLat(116.397428, 39.90923),
+				// 	zoom: 12
+				// })
+			});
+
+      map.plugin(['AMap.ToolBar','AMap.MapType','AMap.Scale'],function(){
+        //地图中添加地图操作ToolBar插件
+        //设置地位标记为自定义标记
+        var toolBar = new AMap.ToolBar();
+        map.addControl(toolBar);
+
+        //添加地图类型切换插件
+        //地图类型切换
+        var mapType= new AMap.MapType({
+            defaultType:0,//默认显示普通地图（0=普通地图，1=卫星地图）
+            showRoad:true //叠加路网图层
+        });
+        map.addControl(mapType);
+
+        //加载比例尺插件
+        scale = new AMap.Scale();
+        map.addControl(scale);
+      });
+
+      addBuildings();
+      //叠加3D楼块图层
+      function addBuildings() {
+        if (document.createElement('canvas').getContext('2d')) {
+          //实例化3D楼块图层
+          var buildings = new AMap.Buildings();
+          //在map中添加3D楼块图层
+          buildings.setMap(map);
+        }else{
+          document.getElementById("info").innerHTML="对不起，运行该示例需要浏览器支持HTML5！";
+        }
+      }
+
+
+      document.getElementById("keyword").onkeyup = keydown;
+      //输入提示
+      function autoSearch() {
+        var keywords = document.getElementById("keyword").value;
+        var auto;
+        //加载输入提示插件
+            AMap.service(["AMap.Autocomplete"], function() {
+            var autoOptions = {
+                city: "" //城市，默认全国
+            };
+            auto = new AMap.Autocomplete(autoOptions);
+            //查询成功时返回查询结果
+            if ( keywords.length > 0) {
+                auto.search(keywords, function(status, result){
+                  autocomplete_CallBack(result);
+                });
+            }
+            else {
+                document.getElementById("result1").style.display = "none";
+            }
+        });
+      }
+
+      //输出输入提示结果的回调函数
+      function autocomplete_CallBack(data) {
+        var resultStr = "";
+        var tipArr = data.tips;
+        if (tipArr&&tipArr.length>0) {
+            for (var i = 0; i < tipArr.length; i++) {
+                resultStr += "<div id='divid" + (i + 1) + "' onmouseover='openMarkerTipById(" + (i + 1)
+                            + ",this)' onclick='selectResult(" + i + ")' onmouseout='onmouseout_MarkerStyle(" + (i + 1)
+                            + ",this)' style=\"font-size: 13px;cursor:pointer;padding:5px 5px 5px 5px;\"" + "data=" + tipArr[i].adcode + ">" + tipArr[i].name + "<span style='color:#C1C1C1;'>"+ tipArr[i].district + "</span></div>";
+            }
+        }
+        else  {
+            resultStr = "<div style='padding: 20px; text-align: center; color: #666;'>" +
+                       "<div style='font-size: 24px; margin-bottom: 10px;'>🤔</div>" +
+                       "<div style='font-size: 14px; line-height: 1.6;'>" +
+                       "抱歉，没有找到相关结果<br/>" +
+                       "建议您：<br/>" +
+                       "• 检查关键词拼写<br/>" +
+                       "• 尝试使用更常见的地名<br/>" +
+                       "• 尝试缩短搜索词</div></div>";
+        }
+        document.getElementById("result1").curSelect = -1;
+        document.getElementById("result1").tipArr = tipArr;
+        document.getElementById("result1").innerHTML = resultStr;
+        document.getElementById("result1").style.display = "block";
+      }
+
+      //输入提示框鼠标滑过时的样式
+      function openMarkerTipById(pointid, thiss) {  //根据id打开搜索结果点tip
+        thiss.style.background = '#CAE1FF';
+      }
+
+      //输入提示框鼠标移出时的样式
+      function onmouseout_MarkerStyle(pointid, thiss) {  //鼠标移开后点样式恢复
+        thiss.style.background = "";
+      }
+
+      //从输入提示框中选择关键字并查询
+      function selectResult(index) {
+        if(index<0){
+            return;
+        }
+        if (navigator.userAgent.indexOf("MSIE") > 0) {
+            document.getElementById("keyword").onpropertychange = null;
+            document.getElementById("keyword").onfocus = focus_callback;
+        }
+        //截取输入提示的关键字部分
+        var text = document.getElementById("divid" + (index + 1)).innerHTML.replace(/<[^>].*?>.*<\/[^>].*?>/g,"");
+        var cityCode = document.getElementById("divid" + (index + 1)).getAttribute('data');
+        document.getElementById("keyword").value = text;
+        document.getElementById("result1").style.display = "none";
+        //根据选择的输入提示关键字查询
+        map.plugin(["AMap.PlaceSearch"], function() {
+            var msearch = new AMap.PlaceSearch();  //构造地点查询类
+            AMap.event.addListener(msearch, "complete", placeSearch_CallBack); //查询成功时的回调函数
+        msearch.setCity(cityCode);
+            msearch.search(text);  //关键字查询查询
+        });
+      }
+
+      //定位选择输入提示关键字
+      function focus_callback() {
+        if (navigator.userAgent.indexOf("MSIE") > 0) {
+            document.getElementById("keyword").onpropertychange = autoSearch;
+       }
+      }
+
+      //输出关键字查询结果的回调函数
+      function placeSearch_CallBack(data) {
+        //清空地图上的InfoWindow和Marker
+        windowsArr = [];
+        marker     = [];
+        map.clearMap();
+        var resultStr1 = "";
+        var poiArr = data.poiList.pois;
+        var resultCount = poiArr.length;
+        for (var i = 0; i < resultCount; i++) {
+            resultStr1 += "<div id='divid" + (i + 1) + "' onmouseover='openMarkerTipById1(" + i + ",this)' onmouseout='onmouseout_MarkerStyle(" + (i + 1) + ",this)' style=\"font-size: 12px;cursor:pointer;padding:0px 0 4px 2px; border-bottom:1px solid #C1FFC1;\"><table><tr><td><img src=\"http://webapi.amap.com/images/" + (i + 1) + ".png\"></td>" + "<td><h3><font color=\"#00a6ac\">名称: " + poiArr[i].name + "</font></h3>";
+                resultStr1 += TipContents(poiArr[i].type, poiArr[i].address, poiArr[i].tel) + "</td></tr></table></div>";
+                addmarker(i, poiArr[i]);
+        }
+        map.setFitView();
+      }
+
+      //鼠标滑过查询结果改变背景样式，根据id打开信息窗体
+      function openMarkerTipById1(pointid, thiss) {
+        thiss.style.background = '#CAE1FF';
+        windowsArr[pointid].open(map, marker[pointid]);
+      }
+
+      //添加查询结果的marker&infowindow
+      function addmarker(i, d) {
+        var lngX = d.location.getLng();
+        var latY = d.location.getLat();
+        var markerOption = {
+            map:map,
+            icon:"http://webapi.amap.com/images/" + (i + 1) + ".png",
+            position:new AMap.LngLat(lngX, latY)
+        };
+        var mar = new AMap.Marker(markerOption);
+        marker.push(new AMap.LngLat(lngX, latY));
+
+        var infoWindow = new AMap.InfoWindow({
+            content:"<h3><font color=\"#00a6ac\">  " + (i + 1) + ". " + d.name + "</font></h3>" + TipContents(d.type, d.address, d.tel),
+            size:new AMap.Size(300, 0),
+            autoMove:true,
+            offset:new AMap.Pixel(0,-30)
+        });
+        windowsArr.push(infoWindow);
+        var aa = function (e) {infoWindow.open(map, mar.getPosition());};
+        AMap.event.addListener(mar, "mouseover", aa);
+      }
+
+      //infowindow显示内容
+      function TipContents(type, address, tel) {  //窗体内容
+        var str = "  地址：" + address||"暂无" + "<br />  电话：" + tel||"暂无" + " <br />  类型：" + type||"暂无";
+        return str;
+      }
+      function keydown(event){
+        var key = (event||window.event).keyCode;
+        var result = document.getElementById("result1")
+        var cur = result.curSelect;
+        if(key===40){//down
+            if(cur + 1 < result.childNodes.length){
+                if(result.childNodes[cur]){
+                    result.childNodes[cur].style.background='';
+                }
+                result.curSelect=cur+1;
+                result.childNodes[cur+1].style.background='#CAE1FF';
+                document.getElementById("keyword").value = result.tipArr[cur+1].name;
+            }
+        }else if(key===38){//up
+            if(cur-1>=0){
+                if(result.childNodes[cur]){
+                    result.childNodes[cur].style.background='';
+                }
+                result.curSelect=cur-1;
+                result.childNodes[cur-1].style.background='#CAE1FF';
+                document.getElementById("keyword").value = result.tipArr[cur-1].name;
+            }
+        }else if(key === 13){
+            var res = document.getElementById("result1");
+        if(res && res['curSelect'] !== -1){
+          selectResult(document.getElementById("result1").curSelect);
+        }
+        }else{
+            autoSearch();
+        }
+      }
+
+	</script>
+</body>
+</html>
