@@ -2,22 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化页面功能
     initPage();
     
-    // 添加搜索功能
-    document.getElementById('search-button').addEventListener('click', function() {
-        const searchInput = document.getElementById('city-search').value.trim();
-        if (searchInput) {
-            searchCity(searchInput);
-        }
-    });
-    
-    document.getElementById('city-search').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            const searchInput = this.value.trim();
-            if (searchInput) {
-                searchCity(searchInput);
-            }
-        }
-    });
+    // 注意：搜索功能现在由 integrated-map.js 处理
     
     // 初始化页面函数
     function initPage() {
@@ -43,32 +28,95 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 检查当前时间更新页面主题
         updateTimeBasedTheme();
+
+        // 加载热门城市天气数据用于排行榜
+        loadRankingData();
         
         console.log('页面初始化完成');
     }
-    
-    // 搜索城市函数
-    async function searchCity(query) {
+
+    // 加载排行榜数据
+    async function loadRankingData() {
         try {
-            console.log(`主页搜索城市: ${query}`);
-            const result = await weatherAPI.searchCity(query);
-            console.log('搜索结果:', result);
+            console.log('开始加载城市天气数据...');
             
-            if (result && result.code === "200" && result.location && result.location.length > 0) {
-                // 找到城市，跳转到详情页
-                const location = result.location[0];
-                
-                // 保存到最近访问的城市
-                saveRecentCity(location.id, location.name);
-                
-                window.location.href = `detail.html?location=${location.id}&name=${encodeURIComponent(location.name)}`;
+            const topCitiesWeatherData = await weatherAPI.getTopCitiesWeather();
+            console.log('热门城市天气数据:', topCitiesWeatherData);
+            
+            if (topCitiesWeatherData && topCitiesWeatherData.length > 0) {
+                // 生成温度排行榜
+                generateTemperatureRankings(topCitiesWeatherData);
             } else {
-                // 未找到城市
-                alert(`未找到城市: ${query}`);
+                console.error('没有获取到有效的城市天气数据');
+                showRankingError();
             }
         } catch (error) {
-            console.error('搜索城市出错:', error);
-            alert('搜索出错，请稍后重试');
+            console.error('加载城市天气数据错误:', error);
+            showRankingError();
+        }
+    }
+
+    // 生成温度排行榜
+    function generateTemperatureRankings(weatherData) {
+        // 按温度排序
+        const highTempData = [...weatherData].sort((a, b) => b.temp - a.temp);
+        const lowTempData = [...weatherData].sort((a, b) => a.temp - b.temp);
+        
+        // 高温排行榜
+        const highTempTable = document.getElementById('high-temp-table');
+        if (highTempTable) {
+            const tbody = highTempTable.getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+            
+            highTempData.slice(0, 10).forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>${item.temp}°C</td>
+                `;
+                row.style.cursor = 'pointer';
+                row.addEventListener('click', () => {
+                    window.location.href = `detail.html?location=${item.id}&name=${encodeURIComponent(item.name)}`;
+                });
+                tbody.appendChild(row);
+            });
+        }
+        
+        // 低温排行榜
+        const lowTempTable = document.getElementById('low-temp-table');
+        if (lowTempTable) {
+            const tbody = lowTempTable.getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+            
+            lowTempData.slice(0, 10).forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>${item.temp}°C</td>
+                `;
+                row.style.cursor = 'pointer';
+                row.addEventListener('click', () => {
+                    window.location.href = `detail.html?location=${item.id}&name=${encodeURIComponent(item.name)}`;
+                });
+                tbody.appendChild(row);
+            });
+        }
+    }
+
+    // 显示排行榜错误
+    function showRankingError() {
+        const errorMessage = '<tr><td colspan="3">获取天气数据失败，请刷新页面重试</td></tr>';
+        
+        const highTempTable = document.getElementById('high-temp-table');
+        if (highTempTable) {
+            highTempTable.getElementsByTagName('tbody')[0].innerHTML = errorMessage;
+        }
+        
+        const lowTempTable = document.getElementById('low-temp-table');
+        if (lowTempTable) {
+            lowTempTable.getElementsByTagName('tbody')[0].innerHTML = errorMessage;
         }
     }
     
@@ -135,17 +183,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.remove('hover');
             });
         });
-        
-        // 给搜索框添加焦点效果
-        const searchInput = document.getElementById('city-search');
-        if (searchInput && searchInput.parentNode) {
-            searchInput.addEventListener('focus', function() {
-                this.parentNode.classList.add('focus');
-            });
-            searchInput.addEventListener('blur', function() {
-                this.parentNode.classList.remove('focus');
-            });
-        }
     }
     
     // 根据当前时间更新主题
@@ -168,4 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body.classList.add('theme-night');
         }
     }
+
+    // 导出函数供其他脚本使用
+    window.saveRecentCity = saveRecentCity;
 });

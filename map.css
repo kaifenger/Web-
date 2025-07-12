@@ -1,14 +1,225 @@
 /* 地图容器样式 */
 .map-section {
     margin-bottom: 2rem;
+    position: relative;
+    height: 500px;
 }
 
-#china-map {
-    height: 500px;
+#mapContainer {
+    height: 100%;
+    width: 100%;
     background-color: var(--card-bg);
     border-radius: 8px;
     box-shadow: var(--shadow);
     overflow: hidden;
+}
+
+/* 从 Map.html 集成的搜索框样式 */
+#tip {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    min-width: 400px;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+}
+
+#tip b {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: block;
+    font-weight: 500;
+}
+
+/* 输入框样式 */
+#tip input[type="text"] {
+    width: 100%;
+    height: 40px;
+    border: none;
+    padding: 0 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    margin-top: 8px;
+}
+
+#tip input[type="text"]:focus {
+    background: white;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+#tip input[type="text"]::placeholder {
+    color: #999;
+}
+
+/* 搜索结果容器 */
+#result1 {
+    max-height: 350px;
+    overflow-y: auto;
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+/* 搜索结果项样式 */
+#result1 > div {
+    padding: 12px 15px !important;
+    border-bottom: 1px solid rgba(193, 255, 193, 0.3) !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 2px;
+}
+
+#result1 > div:hover {
+    background: linear-gradient(45deg, #667eea, #764ba2) !important;
+    color: white;
+    transform: translateX(5px);
+}
+
+#result1 > div:last-child {
+    border-bottom: none !important;
+}
+
+/* 搜索结果显示区域 */
+.search-results {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.weather-info {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.weather-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.current-weather {
+    flex: 1;
+    min-width: 300px;
+}
+
+.current-weather h4 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.current-weather p {
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.current-weather p:last-child {
+    border-bottom: none;
+}
+
+.current-weather strong {
+    color: var(--secondary-color);
+    min-width: 80px;
+}
+
+.weather-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 200px;
+}
+
+.weather-actions .btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.weather-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+/* 最近访问城市样式 */
+.recent-cities {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.recent-cities h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.cities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.city-link {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.city-link:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    #tip {
+        left: 10px;
+        right: 10px;
+        min-width: auto;
+        max-width: none;
+        padding: 15px;
+    }
+    
+    .map-section {
+        height: 400px;
+    }
 }
 
 /* 地图工具提示样式 */
